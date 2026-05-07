@@ -25,10 +25,11 @@ export default function Header({ variant = 'home' }) {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 font-bold text-2xl tracking-tight"
+          className="flex items-center gap-1 font-extrabold text-2xl tracking-tight"
         >
-          <span className={isLight ? 'text-white' : 'text-[#0770e3]'}>sky</span>
-          <span className={isLight ? 'text-[#00d1c1]' : 'text-[#0770e3]'}>scanner</span>
+          <Plane className={`w-6 h-6 ${isLight ? 'text-[#00d1c1]' : 'text-[#0770e3]'} -rotate-12`} />
+          <span className={isLight ? 'text-white' : 'text-[#0770e3]'}>Fly</span>
+          <span className={isLight ? 'text-[#00d1c1]' : 'text-[#00b8aa]'}>Yaro</span>
         </button>
 
         <nav className="hidden md:flex items-center gap-1">

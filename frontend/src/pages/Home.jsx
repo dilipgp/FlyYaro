@@ -20,12 +20,15 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 lg:px-8 pt-12 md:pt-20">
           <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium text-[#00d1c1] mb-5 border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-[#00d1c1] animate-pulse" /> Your Travel Yaro
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-4">
-              Millions of cheap flights.<br />
-              <span className="text-[#00d1c1]">One simple search.</span>
+              Fly with your Yaro.<br />
+              <span className="text-[#00d1c1]">Cheaper flights. Smarter trips.</span>
             </h1>
             <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl">
-              Compare flights from over 1,200 airlines and travel sites — all in one place, with no hidden fees.
+              FlyYaro compares flights from 1,200+ airlines and travel sites — your trusted buddy for every journey, with no hidden fees.
             </p>
           </div>
         </div>

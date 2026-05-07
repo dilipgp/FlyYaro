@@ -172,7 +172,7 @@ export const TRENDING_SEARCHES = [
 
 export const FAQ_ITEMS = [
   {
-    q: 'How does Skyscanner find such cheap flight deals?',
+    q: 'How does FlyYaro find such cheap flight deals?',
     a: 'We compare flights from over 1,200 airlines and travel sites in seconds, so you can find the lowest prices available without booking fees added on.',
   },
   {
@@ -184,7 +184,7 @@ export const FAQ_ITEMS = [
     a: 'Yes — our Everywhere search and price alerts help you grab last-minute bargains. Be flexible with dates and airports for the best savings.',
   },
   {
-    q: 'Are there hidden fees with Skyscanner?',
-    a: 'No. Skyscanner is a free comparison service. We don’t charge any booking fees — the price you see goes straight to the travel provider.',
+    q: 'Are there hidden fees with FlyYaro?',
+    a: 'No. FlyYaro is a free comparison service. We don’t charge any booking fees — the price you see goes straight to the travel provider.',
   },
 ];

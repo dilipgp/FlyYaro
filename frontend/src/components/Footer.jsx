@@ -53,9 +53,10 @@ export default function Footer() {
         </div>
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-lg text-white">sky<span className="text-[#00d1c1]">scanner</span></span>
+            <span className="font-extrabold text-lg text-white">Fly<span className="text-[#00d1c1]">Yaro</span></span>
+            <span className="text-slate-500">· Your Travel Yaro</span>
           </div>
-          <p>© {new Date().getFullYear()} Skyscanner Clone · For demo purposes only</p>
+          <p>© {new Date().getFullYear()} FlyYaro Technologies Pvt Ltd · FlyYaro.com</p>
         </div>
       </div>
     </footer>
