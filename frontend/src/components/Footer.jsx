@@ -21,7 +21,7 @@ export default function Footer() {
               <li><a href="#" className="hover:text-white">About us</a></li>
               <li><a href="#" className="hover:text-white">Careers</a></li>
               <li><a href="#" className="hover:text-white">Press</a></li>
-              <li><a href="#" className="hover:text-white">Investors</a></li>
+              <li><a href="/brand" className="hover:text-white">Brand kit</a></li>
             </ul>
           </div>
           <div>
@@ -52,9 +52,9 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-slate-400">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="font-extrabold text-lg text-white">Fly<span className="text-[#00d1c1]">Yaro</span></span>
-            <span className="text-slate-500">· Your Travel Yaro</span>
+            <span className="text-slate-500 hidden sm:inline">· Book Smart. Fly Better.</span>
           </div>
           <p>© {new Date().getFullYear()} FlyYaro Technologies Pvt Ltd · FlyYaro.com</p>
         </div>

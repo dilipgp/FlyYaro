@@ -21,7 +21,7 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 lg:px-8 pt-12 md:pt-20">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium text-[#00d1c1] mb-5 border border-white/10">
-              <span className="w-2 h-2 rounded-full bg-[#00d1c1] animate-pulse" /> Your Travel Yaro
+              <span className="w-2 h-2 rounded-full bg-[#00d1c1] animate-pulse" /> Book Smart. Fly Better.
             </div>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-4">
               Fly with your Yaro.<br />

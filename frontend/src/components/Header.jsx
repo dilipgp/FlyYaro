@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plane, Hotel, Car, Globe, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
+import { LogoHorizontal } from './Logo';
 
 const navItems = [
   { label: 'Flights', icon: Plane, path: '/' },
@@ -25,11 +26,10 @@ export default function Header({ variant = 'home' }) {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-1 font-extrabold text-2xl tracking-tight"
+          aria-label="FlyYaro home"
+          className="flex items-center"
         >
-          <Plane className={`w-6 h-6 ${isLight ? 'text-[#00d1c1]' : 'text-[#0770e3]'} -rotate-12`} />
-          <span className={isLight ? 'text-white' : 'text-[#0770e3]'}>Fly</span>
-          <span className={isLight ? 'text-[#00d1c1]' : 'text-[#00b8aa]'}>Yaro</span>
+          <LogoHorizontal height={36} variant={isLight ? 'light' : 'dark'} withSlogan={false} />
         </button>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -60,7 +60,6 @@ export default function Header({ variant = 'home' }) {
             <ChevronDown className="w-4 h-4" />
           </button>
           <Button
-            variant={isLight ? 'secondary' : 'default'}
             className={
               isLight
                 ? 'bg-white text-[#05203c] hover:bg-slate-100 rounded-full font-semibold'
