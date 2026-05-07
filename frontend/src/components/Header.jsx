@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plane, Hotel, Car, Globe, Menu, X, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
+import { Plane, Hotel, Car, Menu, X, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { LogoHorizontal } from './Logo';
+import CurrencySelector from './CurrencySelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,15 +88,7 @@ export default function Header({ variant = 'home' }) {
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
-          <button
-            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors ${
-              isLight ? 'hover:bg-white/10' : 'hover:bg-slate-100'
-            }`}
-          >
-            <Globe className="w-4 h-4" />
-            EN · USD
-            <ChevronDown className="w-4 h-4" />
-          </button>
+          <CurrencySelector variant={isLight ? 'light' : 'dark'} />
 
           {user ? (
             <DropdownMenu>
@@ -174,7 +167,7 @@ export default function Header({ variant = 'home' }) {
               </Link>
             ))}
             <button className="w-full text-left flex items-center gap-3 px-3 py-3">
-              <Globe className="w-5 h-5" /> EN · USD
+              <CurrencySelector variant={isLight ? 'light' : 'dark'} />
             </button>
             {user ? (
               <>

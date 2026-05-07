@@ -6,8 +6,10 @@ import Footer from '../components/Footer';
 import SearchForm from '../components/SearchForm';
 import { POPULAR_DESTINATIONS, TRENDING_SEARCHES, FAQ_ITEMS } from '../mock';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/ui/accordion';
+import { useCurrency } from '../context/CurrencyContext';
 
 export default function Home() {
+  const { formatPrice } = useCurrency();
   return (
     <div className="min-h-screen bg-white">
       <Header variant="home" />
@@ -103,7 +105,7 @@ export default function Home() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs text-white/80">from</div>
-                    <div className="text-base font-bold">${d.price}</div>
+                    <div className="text-base font-bold">{formatPrice(d.price)}</div>
                   </div>
                 </div>
               </div>
@@ -142,7 +144,7 @@ export default function Home() {
                   </div>
                   <div className="text-right flex-shrink-0 ml-3">
                     <div className="text-xs text-slate-500">from</div>
-                    <div className="text-base font-bold text-slate-900">${s.price}</div>
+                    <div className="text-base font-bold text-slate-900">{formatPrice(s.price)}</div>
                   </div>
                 </Link>
               );

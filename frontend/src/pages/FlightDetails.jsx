@@ -9,11 +9,13 @@ import { Label } from '../components/ui/label';
 import { useToast } from '../hooks/use-toast';
 import { Toaster } from '../components/ui/toaster';
 import { AIRPORTS, AIRLINES, durationLabel } from '../mock';
+import { useCurrency } from '../context/CurrencyContext';
 
 export default function FlightDetails() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const from = params.get('from');
   const to = params.get('to');
@@ -45,7 +47,7 @@ export default function FlightDetails() {
     }
     toast({
       title: 'Booking confirmed (demo)',
-      description: `${airline.name} · ${from} → ${to} · $${total}. Confirmation sent to ${pax.email}.`,
+      description: `${airline.name} · ${from} → ${to} · ${formatPrice(total)}. Confirmation sent to ${pax.email}.`,
     });
     setTimeout(() => navigate('/'), 1500);
   };
@@ -155,7 +157,7 @@ export default function FlightDetails() {
                       />
                       <span className="text-sm font-medium text-slate-800">{x.l}</span>
                     </div>
-                    <span className="text-sm font-semibold text-slate-900">+ ${x.p}</span>
+                    <span className="text-sm font-semibold text-slate-900">+ {formatPrice(x.p)}</span>
                   </label>
                 ))}
               </div>
@@ -164,8 +166,7 @@ export default function FlightDetails() {
                 type="submit"
                 className="w-full bg-[#0770e3] hover:bg-[#0660c5] text-white font-semibold rounded-lg py-6 text-base mt-4"
               >
-                <CreditCard className="w-5 h-5 mr-2" /> Confirm and pay $
-                {total}
+                <CreditCard className="w-5 h-5 mr-2" /> Confirm and pay {formatPrice(total)}
               </Button>
               <p className="text-xs text-slate-500 text-center">
                 This is a demo — no real payment will be processed.
@@ -179,35 +180,35 @@ export default function FlightDetails() {
               <h2 className="font-bold text-slate-900 mb-4">Price summary</h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Adult (1 × ${price})</span>
-                  <span className="font-medium text-slate-900">${price}</span>
+                  <span className="text-slate-600">Adult (1 × {formatPrice(price)})</span>
+                  <span className="font-medium text-slate-900">{formatPrice(price)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-600">Taxes & fees</span>
-                  <span className="font-medium text-slate-900">${taxes}</span>
+                  <span className="font-medium text-slate-900">{formatPrice(taxes)}</span>
                 </div>
                 {extras.bag && (
                   <div className="flex justify-between">
                     <span className="text-slate-600">Checked bag</span>
-                    <span className="font-medium text-slate-900">$35</span>
+                    <span className="font-medium text-slate-900">{formatPrice(35)}</span>
                   </div>
                 )}
                 {extras.seat && (
                   <div className="flex justify-between">
                     <span className="text-slate-600">Premium seat</span>
-                    <span className="font-medium text-slate-900">$18</span>
+                    <span className="font-medium text-slate-900">{formatPrice(18)}</span>
                   </div>
                 )}
                 {extras.insurance && (
                   <div className="flex justify-between">
                     <span className="text-slate-600">Insurance</span>
-                    <span className="font-medium text-slate-900">$24</span>
+                    <span className="font-medium text-slate-900">{formatPrice(24)}</span>
                   </div>
                 )}
               </div>
               <div className="border-t border-slate-200 mt-4 pt-4 flex justify-between items-center">
                 <span className="font-bold text-slate-900">Total</span>
-                <span className="text-2xl font-bold text-slate-900">${total}</span>
+                <span className="text-2xl font-bold text-slate-900">{formatPrice(total)}</span>
               </div>
               <div className="mt-4 p-3 bg-slate-50 rounded-lg text-xs text-slate-600">
                 Booking via <span className="font-semibold text-slate-800">{provider}</span>. Final price shown to you on their site may differ.

@@ -10,6 +10,7 @@ import { Slider } from '../components/ui/slider';
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Sheet, SheetContent, SheetTrigger } from '../components/ui/sheet';
 import { generateFlights, durationLabel, AIRPORTS, AIRLINES } from '../mock';
+import { useCurrency } from '../context/CurrencyContext';
 
 function StopsLabel({ stops, city }) {
   if (stops === 0) return <span className="text-emerald-600 font-medium">Direct</span>;
@@ -20,7 +21,7 @@ function StopsLabel({ stops, city }) {
   );
 }
 
-function FlightCard({ flight, onSelect }) {
+function FlightCard({ flight, onSelect, formatPrice }) {
   const fromAirport = AIRPORTS.find((a) => a.code === flight.from);
   const toAirport = AIRPORTS.find((a) => a.code === flight.to);
   return (
@@ -75,7 +76,7 @@ function FlightCard({ flight, onSelect }) {
 
         <div className="md:w-56 bg-slate-50 md:border-l border-t md:border-t-0 border-slate-200 p-5 flex flex-col items-center justify-center text-center">
           <div className="text-xs text-slate-500">via {flight.provider}</div>
-          <div className="text-3xl font-bold text-slate-900 mt-1">${flight.price}</div>
+          <div className="text-3xl font-bold text-slate-900 mt-1">{formatPrice(flight.price)}</div>
           <div className="text-xs text-slate-500 mb-3">total per traveler</div>
           <Button
             onClick={() => onSelect(flight)}
@@ -89,7 +90,7 @@ function FlightCard({ flight, onSelect }) {
   );
 }
 
-function FilterPanel({ filters, setFilters, allAirlines, maxPrice }) {
+function FilterPanel({ filters, setFilters, allAirlines, maxPrice, formatPrice }) {
   const toggleAirline = (code) => {
     const cur = new Set(filters.airlines);
     if (cur.has(code)) cur.delete(code); else cur.add(code);
@@ -121,7 +122,7 @@ function FilterPanel({ filters, setFilters, allAirlines, maxPrice }) {
       </div>
 
       <div>
-        <h3 className="font-semibold text-slate-900 mb-3">Price (max ${filters.priceMax})</h3>
+        <h3 className="font-semibold text-slate-900 mb-3">Price (max {formatPrice(filters.priceMax)})</h3>
         <Slider
           value={[filters.priceMax]}
           onValueChange={(v) => setFilters({ ...filters, priceMax: v[0] })}
@@ -131,8 +132,8 @@ function FilterPanel({ filters, setFilters, allAirlines, maxPrice }) {
           className="my-4"
         />
         <div className="flex justify-between text-xs text-slate-500">
-          <span>$50</span>
-          <span>${maxPrice}</span>
+          <span>{formatPrice(50)}</span>
+          <span>{formatPrice(maxPrice)}</span>
         </div>
       </div>
 
@@ -157,6 +158,7 @@ function FilterPanel({ filters, setFilters, allAirlines, maxPrice }) {
 export default function Results() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
   const from = params.get('from') || 'JFK';
   const to = params.get('to') || 'LHR';
   const depart = params.get('depart') || '';
@@ -254,7 +256,7 @@ export default function Results() {
                   Reset
                 </button>
               </div>
-              <FilterPanel filters={filters} setFilters={setFilters} allAirlines={allAirlines} maxPrice={maxPrice} />
+              <FilterPanel filters={filters} setFilters={setFilters} allAirlines={allAirlines} maxPrice={maxPrice} formatPrice={formatPrice} />
             </div>
           </aside>
 
@@ -291,7 +293,7 @@ export default function Results() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-80 overflow-y-auto">
                   <h2 className="font-bold text-lg mb-4">Filters</h2>
-                  <FilterPanel filters={filters} setFilters={setFilters} allAirlines={allAirlines} maxPrice={maxPrice} />
+                  <FilterPanel filters={filters} setFilters={setFilters} allAirlines={allAirlines} maxPrice={maxPrice} formatPrice={formatPrice} />
                 </SheetContent>
               </Sheet>
             </div>
@@ -305,7 +307,7 @@ export default function Results() {
             ) : (
               <div className="space-y-3">
                 {filtered.map((f) => (
-                  <FlightCard key={f.id} flight={f} onSelect={select} />
+                  <FlightCard key={f.id} flight={f} onSelect={select} formatPrice={formatPrice} />
                 ))}
               </div>
             )}
