@@ -1,4 +1,5 @@
 name: Build and deploy Frontend to Azure Web App
+
 on:
 push:
 branches:
