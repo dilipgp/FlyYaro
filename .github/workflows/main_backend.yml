@@ -1,4 +1,4 @@
-name: Deploy Python Backend to Azure
+name: Deploy Backend API to Azure
 
 on:
   workflow_dispatch:
@@ -7,37 +7,77 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
+      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup Python (MATCH Azure runtime)
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - name: Install Python dependencies
+      # Install dependencies
+      - name: Install dependencies
         working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify backend files
-        run: ls -R backend
-
-      - name: Login to Azure
+      # Azure login (Service Principal)
+      - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4F4A299A50D84764B84756A612E65C8D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE1F312A9C2C49F8B5D8703119DA98AD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BC0C00E1CFB9492DB74CD6B63D5BE08A }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
+      # Deploy to Azure App Service
+      - name: Deploy Backend to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: backend-api-python
+          app-name: backend-python
           package: backend
+
+# name: Deploy Python Backend to Azure
+
+# on:
+#   workflow_dispatch:
+
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+
+#     permissions:
+#       id-token: write
+#       contents: read
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
+
+#       - name: Install Python dependencies
+#         working-directory: backend
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+
+#       - name: Verify backend files
+#         run: ls -R backend
+
+#       - name: Login to Azure
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4F4A299A50D84764B84756A612E65C8D }}
+#           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE1F312A9C2C49F8B5D8703119DA98AD }}
+#           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BC0C00E1CFB9492DB74CD6B63D5BE08A }}
+
+#       - name: Deploy to Azure Web App
+#         uses: azure/webapps-deploy@v3
+#         with:
+#           app-name: backend-api-python
+#           package: backend
