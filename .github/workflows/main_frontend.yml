@@ -1,66 +1,107 @@
-name: Build and Deploy Frontend to Azure
+name: Deploy Frontend to Azure Web App
 
 on:
   workflow_dispatch:
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-
     steps:
+      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      # Install + build
+      - name: Install & Build Frontend
         working-directory: frontend
-        run: npm install --legacy-peer-deps
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
 
-      - name: Build frontend
-        working-directory: frontend
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: frontend
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-
-      - name: Login to Azure
+      # Azure Login
+      - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4F4A299A50D84764B84756A612E65C8D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE1F312A9C2C49F8B5D8703119DA98AD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BC0C00E1CFB9492DB74CD6B63D5BE08A }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
+      # Deploy ONLY build output
+      - name: Deploy Frontend to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: frontend
-          package: .
+          package: frontend/build   # (React CRA)
+          # package: frontend/dist   # (Vite - use this instead if needed)
+
+# name: Build and Deploy Frontend to Azure
+
+# on:
+#   workflow_dispatch:
+# # on:
+# #   push:
+# #     branches:
+# #       - main
+# #   workflow_dispatch:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     permissions:
+#       contents: read
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+
+#       - name: Install dependencies
+#         working-directory: frontend
+#         run: npm install --legacy-peer-deps
+
+#       - name: Build frontend
+#         working-directory: frontend
+#         run: npm run build
+
+#       - name: Upload build artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: frontend-build
+#           path: frontend
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     permissions:
+#       id-token: write
+#       contents: read
+
+#     steps:
+#       - name: Download artifact
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: frontend-build
+
+#       - name: Login to Azure
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4F4A299A50D84764B84756A612E65C8D }}
+#           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE1F312A9C2C49F8B5D8703119DA98AD }}
+#           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BC0C00E1CFB9492DB74CD6B63D5BE08A }}
+
+#       - name: Deploy to Azure Web App
+#         uses: azure/webapps-deploy@v3
+#         with:
+#           app-name: frontend
+#           package: .
