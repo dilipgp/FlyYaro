@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,7 +22,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies (fix peer dependency issue)
+      - name: Install dependencies
         working-directory: frontend
         run: npm install --legacy-peer-deps
 
@@ -36,6 +39,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact
