@@ -1,4 +1,4 @@
-name: Build and Deploy Frontend to Azure
+name: Build and Deploy Frontend
 
 on:
   push:
@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -23,11 +23,11 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Build project
+      - name: Build app
         working-directory: frontend
         run: npm run build
 
-      - name: Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
