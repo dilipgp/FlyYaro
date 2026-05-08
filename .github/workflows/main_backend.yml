@@ -2,18 +2,10 @@ name: Deploy Backend API to Azure App Service
 
 on:
   workflow_dispatch:
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout repository
@@ -28,8 +20,14 @@ jobs:
         working-directory: backend
         run: npm install --legacy-peer-deps
 
-      - name: Verify backend folder
-        run: ls -R backend
+      - name: Create deployment package
+        run: |
+          mkdir deploy
+          cp -r backend/* deploy/
+
+      - name: Install production dependencies in deploy folder
+        working-directory: deploy
+        run: npm install --production --legacy-peer-deps
 
       - name: Azure Login
         uses: azure/login@v2
@@ -38,8 +36,8 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: Deploy to Azure Web App (backend)
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: backend-api-srv
-          package: backend
+          package: deploy
