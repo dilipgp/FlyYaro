@@ -1,4 +1,4 @@
-name: Build and Deploy Frontend
+name: Build and Deploy Frontend to Azure
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -19,11 +19,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install dependencies (fix peer dependency issue)
         working-directory: frontend
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      - name: Build app
+      - name: Build frontend
         working-directory: frontend
         run: npm run build
 
