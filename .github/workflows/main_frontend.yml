@@ -10,6 +10,7 @@ jobs:
 build:
 runs-on: ubuntu-latest
 
+```
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
@@ -32,11 +33,13 @@ steps:
     with:
       name: frontend-build
       path: frontend
+```
 
 deploy:
 runs-on: ubuntu-latest
 needs: build
 
+```
 steps:
   - name: Download artifact
     uses: actions/download-artifact@v4
@@ -55,3 +58,4 @@ steps:
     with:
       app-name: frontend
       package: frontend
+```
