@@ -176,24 +176,28 @@ export default function Login() {
           <div className="space-y-3">
             <SocialButton
               icon={GoogleIcon}
-              label={loading === 'Google' ? 'Connecting…' : 'Continue with Google'}
-              onClick={() => handleSocial('Google')}
+              label={loading === 'Google' ? 'Redirecting to Google…' : 'Continue with Google'}
+              onClick={handleGoogle}
+              disabled={loading === 'Google'}
             />
             <SocialButton
               icon={FacebookIcon}
-              label={loading === 'Facebook' ? 'Connecting…' : 'Continue with Facebook'}
-              onClick={() => handleSocial('Facebook')}
+              label="Continue with Facebook"
+              onClick={() => handleComingSoon('Facebook')}
+              badge="Soon"
             />
             <div className="grid grid-cols-2 gap-3">
               <SocialButton
                 icon={AppleIcon}
-                label={loading === 'Apple' ? '…' : 'Apple'}
-                onClick={() => handleSocial('Apple')}
+                label="Apple"
+                onClick={() => handleComingSoon('Apple')}
+                badge="Soon"
               />
               <SocialButton
                 icon={XIcon}
-                label={loading === 'X' ? '…' : 'X / Twitter'}
-                onClick={() => handleSocial('X')}
+                label="X / Twitter"
+                onClick={() => handleComingSoon('X')}
+                badge="Soon"
               />
             </div>
           </div>
