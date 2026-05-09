@@ -29,12 +29,19 @@ function AirportSelect({ value, onChange, label, placeholder }) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const filtered = AIRPORTS.filter(
-    (a) =>
-      a.city.toLowerCase().includes(query.toLowerCase()) ||
-      a.code.toLowerCase().includes(query.toLowerCase()) ||
-      a.name.toLowerCase().includes(query.toLowerCase())
-  ).slice(0, 8);
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? AIRPORTS.filter(
+        (a) =>
+          a.city.toLowerCase().includes(q) ||
+          a.code.toLowerCase().includes(q) ||
+          a.name.toLowerCase().includes(q) ||
+          a.country.toLowerCase().includes(q)
+      ).slice(0, 12)
+    : [
+        ...AIRPORTS.filter((a) => a.popular),
+        ...AIRPORTS.filter((a) => !a.popular).slice(0, 4),
+      ].slice(0, 14);
 
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
@@ -55,11 +62,16 @@ function AirportSelect({ value, onChange, label, placeholder }) {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="City or airport"
+              placeholder="Search 130+ airports — city, country or code"
               className="w-full px-3 py-2 text-sm focus:outline-none"
             />
           </div>
-          <ul className="max-h-72 overflow-auto">
+          {!q && (
+            <div className="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Popular destinations
+            </div>
+          )}
+          <ul className="max-h-80 overflow-auto">
             {filtered.map((a) => (
               <li key={a.code}>
                 <button
@@ -69,12 +81,12 @@ function AirportSelect({ value, onChange, label, placeholder }) {
                     setOpen(false);
                     setQuery('');
                   }}
-                  className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3"
+                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 flex items-center gap-3"
                 >
                   <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-slate-900 text-sm truncate">
-                      {a.city} ({a.code})
+                      {a.city} <span className="text-slate-400 font-normal">({a.code})</span>
                     </div>
                     <div className="text-xs text-slate-500 truncate">{a.name} · {a.country}</div>
                   </div>
@@ -94,8 +106,9 @@ function AirportSelect({ value, onChange, label, placeholder }) {
 export default function SearchForm({ initial = {}, compact = false }) {
   const navigate = useNavigate();
   const [tripType, setTripType] = useState(initial.tripType || 'return');
-  const [from, setFrom] = useState(initial.from || AIRPORTS[0]);
-  const [to, setTo] = useState(initial.to || AIRPORTS[4]);
+  const findAirport = (code) => AIRPORTS.find((a) => a.code === code);
+  const [from, setFrom] = useState(initial.from || findAirport('JFK') || AIRPORTS[0]);
+  const [to, setTo] = useState(initial.to || findAirport('LHR') || AIRPORTS[1]);
   const [depart, setDepart] = useState(initial.depart || addDays(new Date(), 14));
   const [returnDate, setReturnDate] = useState(initial.returnDate || addDays(new Date(), 21));
   const [travelers, setTravelers] = useState(initial.travelers || { adults: 1, children: 0, infants: 0 });

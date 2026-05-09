@@ -8,6 +8,7 @@ import { Checkbox } from '../components/ui/checkbox';
 import { useToast } from '../hooks/use-toast';
 import { Toaster } from '../components/ui/toaster';
 import { LogoHorizontal } from '../components/Logo';
+import { useAuth } from '../context/AuthContext';
 
 const GoogleIcon = ({ className = 'w-5 h-5' }) => (
   <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -36,15 +37,23 @@ const XIcon = ({ className = 'w-5 h-5' }) => (
   </svg>
 );
 
-function SocialButton({ icon: Icon, label, onClick }) {
+function SocialButton({ icon: Icon, label, onClick, disabled, badge }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all"
+      disabled={disabled}
+      className={`relative w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all ${
+        disabled ? 'opacity-60 cursor-not-allowed hover:bg-white' : ''
+      }`}
     >
       <Icon className="w-5 h-5" />
       <span>{label}</span>
+      {badge && (
+        <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">
+          {badge}
+        </span>
+      )}
     </button>
   );
 }
@@ -52,34 +61,33 @@ function SocialButton({ icon: Icon, label, onClick }) {
 export default function Signup() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { register, loginWithGoogle } = useAuth();
   const [showPwd, setShowPwd] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(null);
 
-  const handleSocial = (provider) => {
-    setLoading(provider);
-    setTimeout(() => {
-      setLoading(null);
-      const fakeUser = {
-        provider,
-        name: `${provider} User`,
-        email: `demo@${provider.toLowerCase()}.com`,
-        loggedInAt: new Date().toISOString(),
-      };
-      localStorage.setItem('flyyaro_user', JSON.stringify(fakeUser));
-      toast({
-        title: `Account created with ${provider}`,
-        description: `Welcome to FlyYaro! (demo)`,
-      });
-      setTimeout(() => navigate('/'), 1000);
-    }, 1100);
+  const handleGoogle = () => {
+    setLoading('Google');
+    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    loginWithGoogle();
   };
 
-  const handleSubmit = (e) => {
+  const handleComingSoon = (provider) => {
+    toast({
+      title: `${provider} sign-up coming soon`,
+      description: `Connect your ${provider} developer credentials to enable this. For now, please use Google or email.`,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) {
       toast({ title: 'Missing details', description: 'Please complete all fields to sign up.' });
+      return;
+    }
+    if (form.password.length < 8) {
+      toast({ title: 'Weak password', description: 'Use at least 8 characters.' });
       return;
     }
     if (!agree) {
@@ -87,15 +95,15 @@ export default function Signup() {
       return;
     }
     setLoading('email');
-    setTimeout(() => {
+    try {
+      const data = await register({ name: form.name, email: form.email, password: form.password });
+      toast({ title: 'Account created!', description: `Welcome aboard, ${data.name}.` });
+      setTimeout(() => navigate('/'), 400);
+    } catch (err) {
+      toast({ title: 'Could not create account', description: err.message || 'Please try again.' });
+    } finally {
       setLoading(null);
-      localStorage.setItem(
-        'flyyaro_user',
-        JSON.stringify({ provider: 'Email', name: form.name, email: form.email, loggedInAt: new Date().toISOString() })
-      );
-      toast({ title: 'Account created!', description: `Welcome aboard, ${form.name}.` });
-      setTimeout(() => navigate('/'), 800);
-    }, 900);
+    }
   };
 
   const pwdStrong = form.password.length >= 8;
@@ -170,24 +178,28 @@ export default function Signup() {
           <div className="space-y-3">
             <SocialButton
               icon={GoogleIcon}
-              label={loading === 'Google' ? 'Connecting…' : 'Sign up with Google'}
-              onClick={() => handleSocial('Google')}
+              label={loading === 'Google' ? 'Redirecting to Google…' : 'Sign up with Google'}
+              onClick={handleGoogle}
+              disabled={loading === 'Google'}
             />
             <SocialButton
               icon={FacebookIcon}
-              label={loading === 'Facebook' ? 'Connecting…' : 'Sign up with Facebook'}
-              onClick={() => handleSocial('Facebook')}
+              label="Sign up with Facebook"
+              onClick={() => handleComingSoon('Facebook')}
+              badge="Soon"
             />
             <div className="grid grid-cols-2 gap-3">
               <SocialButton
                 icon={AppleIcon}
-                label={loading === 'Apple' ? '…' : 'Apple'}
-                onClick={() => handleSocial('Apple')}
+                label="Apple"
+                onClick={() => handleComingSoon('Apple')}
+                badge="Soon"
               />
               <SocialButton
                 icon={XIcon}
-                label={loading === 'X' ? '…' : 'X / Twitter'}
-                onClick={() => handleSocial('X')}
+                label="X / Twitter"
+                onClick={() => handleComingSoon('X')}
+                badge="Soon"
               />
             </div>
           </div>

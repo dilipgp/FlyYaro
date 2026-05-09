@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plane, Hotel, Car, Menu, X, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { LogoHorizontal } from './Logo';
 import CurrencySelector from './CurrencySelector';
+import { useAuth } from '../context/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,35 +20,14 @@ const navItems = [
   { label: 'Car hire', icon: Car, path: '/' },
 ];
 
-function readUser() {
-  try {
-    const raw = localStorage.getItem('flyyaro_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function Header({ variant = 'home' }) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const isLight = variant === 'home';
 
-  useEffect(() => {
-    setUser(readUser());
-    const handler = () => setUser(readUser());
-    window.addEventListener('storage', handler);
-    window.addEventListener('focus', handler);
-    return () => {
-      window.removeEventListener('storage', handler);
-      window.removeEventListener('focus', handler);
-    };
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem('flyyaro_user');
-    setUser(null);
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
@@ -118,7 +98,7 @@ export default function Header({ variant = 'home' }) {
                   <Plane className="w-4 h-4 mr-2" /> My trips
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-rose-600 focus:text-rose-700">
+                <DropdownMenuItem onClick={handleLogout} className="text-rose-600 focus:text-rose-700">
                   <LogOut className="w-4 h-4 mr-2" /> Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -181,7 +161,7 @@ export default function Header({ variant = 'home' }) {
                   </div>
                 </div>
                 <Button
-                  onClick={logout}
+                  onClick={handleLogout}
                   variant="outline"
                   className="w-full rounded-full mt-2"
                 >

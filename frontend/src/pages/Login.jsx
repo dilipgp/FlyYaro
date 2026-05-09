@@ -8,6 +8,7 @@ import { Checkbox } from '../components/ui/checkbox';
 import { useToast } from '../hooks/use-toast';
 import { Toaster } from '../components/ui/toaster';
 import { LogoHorizontal, LogoMark } from '../components/Logo';
+import { useAuth } from '../context/AuthContext';
 
 // Brand-colored SVG icons for social providers (inline so no extra deps)
 const GoogleIcon = ({ className = 'w-5 h-5' }) => (
@@ -40,16 +41,24 @@ const XIcon = ({ className = 'w-5 h-5' }) => (
   </svg>
 );
 
-function SocialButton({ icon: Icon, label, onClick, brandColor }) {
+function SocialButton({ icon: Icon, label, onClick, brandColor, disabled, badge }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all"
+      disabled={disabled}
+      className={`relative w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] transition-all ${
+        disabled ? 'opacity-60 cursor-not-allowed hover:bg-white' : ''
+      }`}
       style={brandColor ? { color: brandColor } : undefined}
     >
       <Icon className="w-5 h-5" />
       <span className="text-slate-800">{label}</span>
+      {badge && (
+        <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">
+          {badge}
+        </span>
+      )}
     </button>
   );
 }
@@ -57,48 +66,44 @@ function SocialButton({ icon: Icon, label, onClick, brandColor }) {
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, loginWithGoogle } = useAuth();
   const [showPwd, setShowPwd] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(null); // provider name when loading
 
-  const handleSocial = (provider) => {
-    setLoading(provider);
-    // Simulate OAuth round-trip
-    setTimeout(() => {
-      setLoading(null);
-      const fakeUser = {
-        provider,
-        name: `${provider} User`,
-        email: `demo@${provider.toLowerCase()}.com`,
-        loggedInAt: new Date().toISOString(),
-      };
-      localStorage.setItem('flyyaro_user', JSON.stringify(fakeUser));
-      toast({
-        title: `Signed in with ${provider}`,
-        description: `Welcome to FlyYaro, ${fakeUser.name}! (demo)`,
-      });
-      setTimeout(() => navigate('/'), 1000);
-    }, 1100);
+  const handleGoogle = () => {
+    setLoading('Google');
+    // Real Google OAuth via Emergent — full-page redirect.
+    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    loginWithGoogle();
   };
 
-  const handleEmailLogin = (e) => {
+  const handleComingSoon = (provider) => {
+    toast({
+      title: `${provider} sign-in coming soon`,
+      description:
+        `Connect your ${provider} developer credentials to enable this. For now, please use Google or email.`,
+    });
+  };
+
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       toast({ title: 'Missing details', description: 'Please enter your email and password.' });
       return;
     }
     setLoading('email');
-    setTimeout(() => {
+    try {
+      const data = await login(email, password);
+      toast({ title: 'Welcome back!', description: `Signed in as ${data.email}` });
+      setTimeout(() => navigate('/'), 400);
+    } catch (err) {
+      toast({ title: 'Could not sign in', description: err.message || 'Please try again.' });
+    } finally {
       setLoading(null);
-      localStorage.setItem(
-        'flyyaro_user',
-        JSON.stringify({ provider: 'Email', name: email.split('@')[0], email, loggedInAt: new Date().toISOString() })
-      );
-      toast({ title: 'Welcome back!', description: `Signed in as ${email}` });
-      setTimeout(() => navigate('/'), 800);
-    }, 900);
+    }
   };
 
   return (
