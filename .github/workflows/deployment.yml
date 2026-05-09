@@ -1,39 +1,43 @@
-name: Deploy Frontend to Azure App Service
+name: Deploy to Azure Web App
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1. Checkout source code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm install --legacy-peer-deps
-
-      - name: Build application
-        working-directory: frontend
-        run: npm run build
-
+      # 2. Login to Azure
       - name: Azure Login
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # 3. Setup Node.js (change version if needed)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 4. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 5. Build project (optional - remove if not needed)
+      - name: Build project
+        run: npm run build --if-present
+
+      # 6. Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: frontend
-          package: frontend
+          app-name: frontned01
+          slot-name: production
+          package: .
